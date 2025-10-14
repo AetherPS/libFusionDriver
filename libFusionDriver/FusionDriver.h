@@ -1,5 +1,6 @@
 #pragma once
 #include "DriverDefinitions.h"
+#include <memory>
 
 #define DRIVER_PATH "/dev/Fusion"
 
