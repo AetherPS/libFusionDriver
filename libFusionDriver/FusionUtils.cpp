@@ -40,7 +40,7 @@ namespace Fusion
 	uint64_t GetRemoteAddress(int processId, const char* library, uint64_t offset)
 	{
 		OrbisLibraryInfo libraries[255];
-		int realCount = GetLibraryList(processId, libraries, 255);
+		int realCount = GetLibraryList(processId, libraries, 255, nullptr);
 
 		for (int i = 0; i < realCount; i++)
 		{
@@ -49,5 +49,19 @@ namespace Fusion
 		}
 
 		return 0;
+	}
+
+	int GetLibraryHandle(int processId, const char* library)
+	{
+		OrbisLibraryInfo libraries[255];
+		int realCount = GetLibraryList(processId, libraries, 255, nullptr);
+
+		for (int i = 0; i < realCount; i++)
+		{
+			if (strstr(libraries[i].Path, library))
+				return libraries[i].Handle;
+		}
+
+		return -1;
 	}
 }

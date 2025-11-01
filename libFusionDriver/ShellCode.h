@@ -1,9 +1,6 @@
 #pragma once
 
 #define STACK_SIZE 0x80000
-#define THREAD_SIZE 0xE1
-#define PRX_LOAD_SIZE 0x1056
-#define PRX_UNLOAD_SIZE 0x5A
 
 namespace Fusion
 {

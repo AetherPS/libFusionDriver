@@ -9,6 +9,12 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;pssli</Extensions>
     </Filter>
+    <Filter Include="Source Files\ShellCode">
+      <UniqueIdentifier>{cbf6d6aa-ac55-4584-b75c-34301df5556c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ShellCode">
+      <UniqueIdentifier>{a0aed8d5-81b9-4681-b2d4-f4bbb3162240}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -21,7 +27,10 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ShellCode.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\ShellCode</Filter>
+    </ClInclude>
+    <ClInclude Include="Embed.h">
+      <Filter>Header Files\ShellCode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -35,7 +44,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ShellCode.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\ShellCode</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
