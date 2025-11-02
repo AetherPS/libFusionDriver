@@ -70,6 +70,12 @@
 "$(SCE_ORBIS_SDK_DIR)\host_tools\bin\orbis-objcopy.exe" -I binary -O elf64-x86-64 -B i386:x86-64 "$(OutDir)ShellCode\ThreadShellCode.bin" "$(ProjectDir)$(IntermediateOutputPath)ThreadShellCode.o"
 "$(SCE_ORBIS_SDK_DIR)\host_tools\bin\orbis-objcopy.exe" -I binary -O elf64-x86-64 -B i386:x86-64 "$(OutDir)ShellCode\UnLoaderShellCode.bin" "$(ProjectDir)$(IntermediateOutputPath)UnLoaderShellCode.o"</Command>
     </PreBuildEvent>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <Lib>
+      <AdditionalDependencies>$(IntDir)LoaderShellCode.o;$(IntDir)ThreadShellCode.o;$(IntDir)UnLoaderShellCode.o;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ORBIS'">
     <ClCompile>
@@ -84,6 +90,12 @@
 "$(SCE_ORBIS_SDK_DIR)\host_tools\bin\orbis-objcopy.exe" -I binary -O elf64-x86-64 -B i386:x86-64 "$(OutDir)ShellCode\ThreadShellCode.bin" "$(ProjectDir)$(IntermediateOutputPath)ThreadShellCode.o"
 "$(SCE_ORBIS_SDK_DIR)\host_tools\bin\orbis-objcopy.exe" -I binary -O elf64-x86-64 -B i386:x86-64 "$(OutDir)ShellCode\UnLoaderShellCode.bin" "$(ProjectDir)$(IntermediateOutputPath)UnLoaderShellCode.o"</Command>
     </PreBuildEvent>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <Lib>
+      <AdditionalDependencies>$(IntDir)LoaderShellCode.o;$(IntDir)ThreadShellCode.o;$(IntDir)UnLoaderShellCode.o;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Embed.h" />
