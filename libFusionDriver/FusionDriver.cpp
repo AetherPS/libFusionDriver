@@ -118,8 +118,12 @@ namespace Fusion
 		Input_ResolveInfo input;
 		input.ProcessId = processId;
 		input.Handle = libHandle;
-		strcpy(input.Library, library);
-		strcpy(input.Symbol, symbol);
+
+		if (library != nullptr)
+			strncpy_s(input.Library, sizeof(input.Library), library, sizeof(library));
+
+		if (symbol != nullptr)
+			strncpy_s(input.Symbol, sizeof(input.Symbol), symbol, sizeof(symbol));
 
 		int res = MakeDriverRequest(PROC_RESOLVE, &input);
 
