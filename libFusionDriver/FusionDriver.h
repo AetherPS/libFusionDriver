@@ -17,7 +17,7 @@ namespace Fusion
 	int AllocateMemory(int processId, uint64_t* outAddress, size_t length, int protection, int flags);
 	int FreeMemory(int processId, uint64_t processAddress, size_t length);
 	int StartThread(int processId, uint64_t threadEntry, uint64_t stackMemory, size_t stackSize);
-	int Resolve(int processId, int libHandle, const char* library, const char* symbol, uint64_t* addr);
+	int Resolve(int processId, int libHandle, const char* library, const char* symbol, unsigned int flags, uint64_t* addr);
 	int GetAuthId(int processId, uint64_t* authId);
 	int SetAuthId(int processId, uint64_t authId);
 }

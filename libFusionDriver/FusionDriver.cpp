@@ -113,11 +113,12 @@ namespace Fusion
 		return MakeDriverRequest(PROC_START_THREAD, &input);
 	}
 
-	int Resolve(int processId, int libHandle, const char* library, const char* symbol, uint64_t* addr)
+	int Resolve(int processId, int libHandle, const char* library, const char* symbol, unsigned int flags, uint64_t* addr)
 	{
 		Input_ResolveInfo input;
 		input.ProcessId = processId;
 		input.Handle = libHandle;
+		input.Flags = flags;
 
 		if (library != nullptr)
 			strncpy_s(input.Library, sizeof(input.Library), library, sizeof(library));

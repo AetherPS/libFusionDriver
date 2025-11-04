@@ -18,14 +18,14 @@ namespace Fusion
 		shellCodeHeader->ShellCodeComplete = 0;
 		shellCodeHeader->ThreadEntry = entryPoint; // Set the thread entry point.
 
-		int res = Resolve(processId, libkernelHandle, nullptr, "scePthreadCreate", &shellCodeHeader->scePthreadCreate);
+		int res = Resolve(processId, libkernelHandle, nullptr, "scePthreadCreate", 0, &shellCodeHeader->scePthreadCreate);
 		if (res != 0)
 		{
 			klog("%s: Failed to resolve scePthreadCreate.\n", __FUNCTION__);
 			return -1;
 		}
 
-		res = Resolve(processId, libkernelHandle, nullptr, "scePthreadJoin", &shellCodeHeader->scePthreadJoin);
+		res = Resolve(processId, libkernelHandle, nullptr, "scePthreadJoin", 0, &shellCodeHeader->scePthreadJoin);
 		if (res != 0)
 		{
 			klog("%s: Failed to resolve scePthreadJoin.\n", __FUNCTION__);
@@ -99,7 +99,7 @@ namespace Fusion
 		shellCodeHeader->ModuleHandle = -1;
 		strcpy(shellCodeHeader->Path, (char*)path);
 
-		int res = Resolve(processId, libkernelHandle, nullptr, "sceKernelLoadStartModule", &shellCodeHeader->sceKernelLoadStartModule);
+		int res = Resolve(processId, libkernelHandle, nullptr, "sceKernelLoadStartModule", 0, &shellCodeHeader->sceKernelLoadStartModule);
 		if (res != 0)
 		{
 			klog("%s: Failed to resolve sceKernelLoadStartModule.\n", __FUNCTION__);
@@ -108,7 +108,7 @@ namespace Fusion
 
 		klog("%s: sceKernelLoadStartModule resolved at %llX\n", __FUNCTION__, shellCodeHeader->sceKernelLoadStartModule);
 
-		res = Resolve(processId, libkernelHandle, nullptr, "scePthreadExit", &shellCodeHeader->scePthreadExit);
+		res = Resolve(processId, libkernelHandle, nullptr, "scePthreadExit", 0, &shellCodeHeader->scePthreadExit);
 		if (res != 0)
 		{
 			klog("%s: Failed to resolve scePthreadExit.\n", __FUNCTION__);
@@ -167,14 +167,14 @@ namespace Fusion
 		shellCodeHeader->ModuleHandle = handle;
 		shellCodeHeader->Result = 0;
 
-		int res = Resolve(processId, libkernelHandle, nullptr, "sceKernelStopUnloadModule", &shellCodeHeader->sceKernelStopUnloadModule);
+		int res = Resolve(processId, libkernelHandle, nullptr, "sceKernelStopUnloadModule", 0, &shellCodeHeader->sceKernelStopUnloadModule);
 		if (res != 0)
 		{
 			klog("%s: Failed to resolve sceKernelStopUnloadModule.\n", __FUNCTION__);
 			return -1;
 		}
 
-		res = Resolve(processId, libkernelHandle, nullptr, "scePthreadExit", &shellCodeHeader->scePthreadExit);
+		res = Resolve(processId, libkernelHandle, nullptr, "scePthreadExit", 0, &shellCodeHeader->scePthreadExit);
 		if (res != 0)
 		{
 			klog("%s: Failed to resolve scePthreadExit.\n", __FUNCTION__);
