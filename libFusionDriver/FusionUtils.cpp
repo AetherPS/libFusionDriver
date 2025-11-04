@@ -40,7 +40,14 @@ namespace Fusion
 	uint64_t GetRemoteAddress(int processId, const char* library, uint64_t offset)
 	{
 		OrbisLibraryInfo libraries[255];
-		int realCount = GetLibraryList(processId, libraries, 255, nullptr);
+		int realCount;
+		int res = GetLibraryList(processId, libraries, 255, &realCount);
+
+		if (res != 0)
+		{
+			klog("%s: GetLibraryList failed with %d\n", __FUNCTION__, res);
+			return res;
+		}
 
 		for (int i = 0; i < realCount; i++)
 		{
@@ -54,7 +61,14 @@ namespace Fusion
 	int GetLibraryHandle(int processId, const char* library)
 	{
 		OrbisLibraryInfo libraries[255];
-		int realCount = GetLibraryList(processId, libraries, 255, nullptr);
+		int realCount;
+		int res = GetLibraryList(processId, libraries, 255, &realCount);
+
+		if (res != 0)
+		{
+			klog("%s: GetLibraryList failed with %d\n", __FUNCTION__, res);
+			return res;
+		}
 
 		for (int i = 0; i < realCount; i++)
 		{
