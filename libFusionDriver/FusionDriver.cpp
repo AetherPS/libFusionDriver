@@ -121,10 +121,10 @@ namespace Fusion
 		input.Flags = flags;
 
 		if (library != nullptr)
-			strncpy_s(input.Library, sizeof(input.Library), library, sizeof(library));
+			strcpy(input.Library, library);
 
 		if (symbol != nullptr)
-			strncpy_s(input.Symbol, sizeof(input.Symbol), symbol, sizeof(symbol));
+			strcpy(input.Symbol, symbol);
 
 		int res = MakeDriverRequest(PROC_RESOLVE, &input);
 
