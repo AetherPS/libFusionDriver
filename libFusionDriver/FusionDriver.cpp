@@ -120,9 +120,12 @@ namespace Fusion
 		input.Handle = libHandle;
 		strcpy(input.Library, library);
 		strcpy(input.Symbol, symbol);
-		input.Result = addr;
 
-		return MakeDriverRequest(PROC_RESOLVE, &input);
+		int res = MakeDriverRequest(PROC_RESOLVE, &input);
+
+		*addr = input.Address;
+
+		return res;
 	}
 
 	int GetAuthId(int processId, uint64_t* authId)
