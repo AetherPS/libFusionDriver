@@ -14,7 +14,7 @@ namespace Fusion
 			return -1;
 		}
 
-		auto shellCodeHeader = (ThreadShellCodeHeader*)_binary_ThreadShellCode_bin_start;
+		auto shellCodeHeader = (ThreadShellCodeHeader*)&_binary_ThreadShellCode_bin_start;
 		shellCodeHeader->ShellCodeComplete = 0;
 		shellCodeHeader->ThreadEntry = entryPoint; // Set the thread entry point.
 
@@ -48,7 +48,8 @@ namespace Fusion
 			return -1;
 		}
 
-		auto totalAllocatedSize = _binary_ThreadShellCode_bin_size + STACK_SIZE;
+		auto shellcodeSize = (uint64_t)&_binary_ThreadShellCode_bin_end - (uint64_t)&_binary_ThreadShellCode_bin_start;
+		auto totalAllocatedSize = shellcodeSize + STACK_SIZE;
 		uint64_t shellCodeMemory;
 		if (AllocateMemory(processId, &shellCodeMemory, totalAllocatedSize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PREFAULT_READ) != 0 || (void*)shellCodeMemory == nullptr || (void*)shellCodeMemory == MAP_FAILED || shellCodeMemory < 0)
 		{
@@ -56,7 +57,7 @@ namespace Fusion
 			return -1;
 		}
 
-		if (ReadWriteMemory(processId, shellCodeMemory, shellCodeHeader, _binary_ThreadShellCode_bin_size, true) != 0)
+		if (ReadWriteMemory(processId, shellCodeMemory, shellCodeHeader, shellcodeSize, true) != 0)
 		{
 			klog("%s: Write shellcode failed.\n", __FUNCTION__);
 			FreeMemory(processId, shellCodeMemory, totalAllocatedSize);
@@ -64,7 +65,7 @@ namespace Fusion
 		}
 
 		// Create a thread to run our shellcode.
-		StartThread(processId, shellCodeMemory + shellCodeHeader->entry, shellCodeMemory + _binary_ThreadShellCode_bin_size, STACK_SIZE);
+		StartThread(processId, shellCodeMemory + shellCodeHeader->entry, shellCodeMemory + shellcodeSize, STACK_SIZE);
 
 		// Wait for the shellcode to complete by reading the byte that will be set to 1 on completion.
 		bool shellCodeComplete = false;
@@ -94,7 +95,7 @@ namespace Fusion
 			return -1;
 		}
 
-		auto shellCodeHeader = (SprxLoaderHeader*)_binary_LoaderShellCode_bin_start;
+		auto shellCodeHeader = (SprxLoaderHeader*)&_binary_LoaderShellCode_bin_start;
 		shellCodeHeader->ModuleHandle = -1;
 		strcpy(shellCodeHeader->Path, (char*)path);
 
@@ -105,6 +106,8 @@ namespace Fusion
 			return -1;
 		}
 
+		klog("%s: sceKernelLoadStartModule resolved at %llX\n", __FUNCTION__, shellCodeHeader->sceKernelLoadStartModule);
+
 		res = Resolve(processId, libkernelHandle, nullptr, "scePthreadExit", &shellCodeHeader->scePthreadExit);
 		if (res != 0)
 		{
@@ -112,24 +115,27 @@ namespace Fusion
 			return -1;
 		}
 
+		klog("%s: scePthreadExit resolved at %llX\n", __FUNCTION__, shellCodeHeader->scePthreadExit);
+
+		uint64_t totalAllocatedSize = (uint64_t)&_binary_LoaderShellCode_bin_end - (uint64_t)&_binary_LoaderShellCode_bin_start;
 		uint64_t shellCodeMemory;
-		if (AllocateMemory(processId, &shellCodeMemory, _binary_LoaderShellCode_bin_size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PREFAULT_READ) != 0 || (void*)shellCodeMemory == nullptr || (void*)shellCodeMemory == MAP_FAILED || shellCodeMemory < 0)
+		if (AllocateMemory(processId, &shellCodeMemory, totalAllocatedSize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PREFAULT_READ) != 0 || (void*)shellCodeMemory == nullptr || (void*)shellCodeMemory == MAP_FAILED || shellCodeMemory < 0)
 		{
 			klog("%s: Failed to allocate memory on the process. %llX\n", __FUNCTION__, shellCodeMemory);
 			return -1;
 		}
 
-		if (ReadWriteMemory(processId, shellCodeMemory, shellCodeHeader, _binary_LoaderShellCode_bin_size, true) != 0)
+		if (ReadWriteMemory(processId, shellCodeMemory, shellCodeHeader, totalAllocatedSize, true) != 0)
 		{
 			klog("%s: Write shellcode failed.\n", __FUNCTION__);
-			FreeMemory(processId, shellCodeMemory, _binary_LoaderShellCode_bin_size);
+			FreeMemory(processId, shellCodeMemory, totalAllocatedSize);
 			return false;
 		}
 
 		if (StartPThread(processId, (uint64_t)(shellCodeMemory + shellCodeHeader->entry)) != 0)
 		{
 			klog("%s: shellcode thread failed.\n", __FUNCTION__);
-			FreeMemory(processId, shellCodeMemory, _binary_LoaderShellCode_bin_size);
+			FreeMemory(processId, shellCodeMemory, totalAllocatedSize);
 			return false;
 		}
 		
@@ -138,12 +144,12 @@ namespace Fusion
 		if (ReadWriteMemory(processId, shellCodeMemory + offsetof(SprxLoaderHeader, ModuleHandle), (void*)&moduleHandle, sizeof(moduleHandle), false) != 0)
 		{
 			klog("%s: Failed to read ModuleHandle.\n", __FUNCTION__);
-			FreeMemory(processId, shellCodeMemory, _binary_LoaderShellCode_bin_size);
+			FreeMemory(processId, shellCodeMemory, totalAllocatedSize);
 			return -1;
 		}
 		
 		// Free up the memory we dont need it anymore.
-		FreeMemory(processId, shellCodeMemory, _binary_LoaderShellCode_bin_size);
+		FreeMemory(processId, shellCodeMemory, totalAllocatedSize);
 		
 		return moduleHandle;
 	}
@@ -157,7 +163,7 @@ namespace Fusion
 			return -1;
 		}
 
-		auto shellCodeHeader = (SprxUnLoaderHeader*)_binary_UnLoaderShellCode_bin_start;
+		auto shellCodeHeader = (SprxUnLoaderHeader*)&_binary_UnLoaderShellCode_bin_start;
 		shellCodeHeader->ModuleHandle = handle;
 		shellCodeHeader->Result = 0;
 
@@ -175,24 +181,25 @@ namespace Fusion
 			return -1;
 		}
 
+		uint64_t totalAllocatedSize = (uint64_t)&_binary_UnLoaderShellCode_bin_end - (uint64_t)&_binary_UnLoaderShellCode_bin_start;
 		uint64_t shellCodeMemory;
-		if (AllocateMemory(processId, &shellCodeMemory, _binary_UnLoaderShellCode_bin_size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PREFAULT_READ) != 0 || (void*)shellCodeMemory == nullptr || (void*)shellCodeMemory == MAP_FAILED || shellCodeMemory < 0)
+		if (AllocateMemory(processId, &shellCodeMemory, totalAllocatedSize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PREFAULT_READ) != 0 || (void*)shellCodeMemory == nullptr || (void*)shellCodeMemory == MAP_FAILED || shellCodeMemory < 0)
 		{
 			klog("%s: Failed to allocate memory on the process. %llX\n", __FUNCTION__, shellCodeMemory);
 			return -1;
 		}
 
-		if (ReadWriteMemory(processId, shellCodeMemory, shellCodeHeader, _binary_UnLoaderShellCode_bin_size, true) != 0)
+		if (ReadWriteMemory(processId, shellCodeMemory, shellCodeHeader, totalAllocatedSize, true) != 0)
 		{
 			klog("%s: Write shellcode failed.\n", __FUNCTION__);
-			FreeMemory(processId, shellCodeMemory, _binary_UnLoaderShellCode_bin_size);
+			FreeMemory(processId, shellCodeMemory, totalAllocatedSize);
 			return -1;
 		}
 
 		if (StartPThread(processId, (uint64_t)(shellCodeMemory + shellCodeHeader->entry)) != 0)
 		{
 			klog("%s: shellcode thread failed.\n", __FUNCTION__);
-			FreeMemory(processId, shellCodeMemory, _binary_UnLoaderShellCode_bin_size);
+			FreeMemory(processId, shellCodeMemory, totalAllocatedSize);
 			return -1;
 		}
 
@@ -201,11 +208,11 @@ namespace Fusion
 		if (ReadWriteMemory(processId, shellCodeMemory + offsetof(SprxUnLoaderHeader, Result), (void*)&result, sizeof(result), false) != 0)
 		{
 			klog("%s: Failed to read Result.\n", __FUNCTION__);
-			FreeMemory(processId, shellCodeMemory, _binary_UnLoaderShellCode_bin_size);
+			FreeMemory(processId, shellCodeMemory, totalAllocatedSize);
 			return -1;
 		}
 
-		FreeMemory(processId, shellCodeMemory, _binary_UnLoaderShellCode_bin_size);
+		FreeMemory(processId, shellCodeMemory, totalAllocatedSize);
 
 		return result;
 	}
