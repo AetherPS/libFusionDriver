@@ -1,5 +1,5 @@
 # 🌀 libFusionDriver
-libFusionDriver is the essential userland component designed to interface with a powerful custom kernel driver. It provides a robust and flexible API, unlocking capabilities for advanced research and homebrew development projects.
+libFusionDriver is the userland component designed to interface with the Fusion kernel driver. It provides a light weight API, unlocking capabilities for research and homebrew development projects.
 
 ## ✨ Key Features and Capabilities
 * Exposes low-level functions useful for studying system internals and **Kernel memory**.
