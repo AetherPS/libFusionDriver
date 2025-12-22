@@ -23,5 +23,6 @@ namespace Fusion
 
 	// Helpful wrappers.
 	uint64_t GetRemoteAddress(int processId, const char* library, uint64_t offset);
+	uint64_t GetRemoteAddress(int processId, int handle, uint64_t offset);
 	int GetLibraryHandle(int processId, const char* library);
 }
