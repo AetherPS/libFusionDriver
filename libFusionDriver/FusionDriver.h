@@ -20,4 +20,8 @@ namespace Fusion
 	int Resolve(int processId, int libHandle, const char* library, const char* symbol, unsigned int flags, uint64_t* addr);
 	int GetAuthId(int processId, uint64_t* authId);
 	int SetAuthId(int processId, uint64_t authId);
+
+	// Helpful wrappers.
+	uint64_t GetRemoteAddress(int processId, const char* library, uint64_t offset);
+	int GetLibraryHandle(int processId, const char* library);
 }

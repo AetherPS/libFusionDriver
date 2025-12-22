@@ -11,13 +11,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="LoaderShellCode.s">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="ThreadShellCode.s">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="UnLoaderShellCode.s">
+    <None Include="FuncCallShellCode.s">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

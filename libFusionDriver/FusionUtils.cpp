@@ -36,46 +36,4 @@ namespace Fusion
 			klog("\n");
 		}
 	}
-
-	uint64_t GetRemoteAddress(int processId, const char* library, uint64_t offset)
-	{
-		OrbisLibraryInfo libraries[255];
-		int realCount;
-		int res = GetLibraryList(processId, libraries, 255, &realCount);
-
-		if (res != 0)
-		{
-			klog("%s: GetLibraryList failed with %d\n", __FUNCTION__, res);
-			return res;
-		}
-
-		for (int i = 0; i < realCount; i++)
-		{
-			if (strstr(libraries[i].Path, library))
-				return libraries[i].MapBase + offset;
-		}
-
-		return 0;
-	}
-
-	int GetLibraryHandle(int processId, const char* library)
-	{
-		OrbisLibraryInfo libraries[255];
-		int realCount;
-		int res = GetLibraryList(processId, libraries, 255, &realCount);
-
-		if (res != 0)
-		{
-			klog("%s: GetLibraryList failed with %d\n", __FUNCTION__, res);
-			return res;
-		}
-
-		for (int i = 0; i < realCount; i++)
-		{
-			if (strstr(libraries[i].Path, library))
-				return libraries[i].Handle;
-		}
-
-		return -1;
-	}
 }

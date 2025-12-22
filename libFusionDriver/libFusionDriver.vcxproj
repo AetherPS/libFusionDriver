@@ -69,15 +69,14 @@
     <PreBuildEvent>
       <Command>cd "$(OutDir)ShellCode"
 
-"$(SCE_ORBIS_SDK_DIR)\host_tools\bin\orbis-objcopy.exe" -I binary -O elf64-x86-64 -B i386:x86-64 "LoaderShellCode.bin" "$(ProjectDir)$(IntermediateOutputPath)LoaderShellCode.o"
 "$(SCE_ORBIS_SDK_DIR)\host_tools\bin\orbis-objcopy.exe" -I binary -O elf64-x86-64 -B i386:x86-64 "ThreadShellCode.bin" "$(ProjectDir)$(IntermediateOutputPath)ThreadShellCode.o"
-"$(SCE_ORBIS_SDK_DIR)\host_tools\bin\orbis-objcopy.exe" -I binary -O elf64-x86-64 -B i386:x86-64 "UnLoaderShellCode.bin" "$(ProjectDir)$(IntermediateOutputPath)UnLoaderShellCode.o"</Command>
+"$(SCE_ORBIS_SDK_DIR)\host_tools\bin\orbis-objcopy.exe" -I binary -O elf64-x86-64 -B i386:x86-64 "FuncCallShellCode.bin" "$(ProjectDir)$(IntermediateOutputPath)FuncCallShellCode.o"</Command>
     </PreBuildEvent>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <Lib>
-      <AdditionalDependencies>$(IntDir)LoaderShellCode.o;$(IntDir)ThreadShellCode.o;$(IntDir)UnLoaderShellCode.o;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(IntDir)ThreadShellCode.o;$(IntDir)FuncCallShellCode.o;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ORBIS'">
@@ -87,32 +86,38 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <AdditionalIncludeDirectories>$(SolutionDir)External\FusionShared;$(SolutionDir)External\StubMaker\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Wno-address-of-packed-member %(AdditionalOptions)</AdditionalOptions>
+      <CppLanguageStd>Cpp17</CppLanguageStd>
     </ClCompile>
     <PreBuildEvent>
       <Command>cd "$(OutDir)ShellCode"
 
-"$(SCE_ORBIS_SDK_DIR)\host_tools\bin\orbis-objcopy.exe" -I binary -O elf64-x86-64 -B i386:x86-64 "LoaderShellCode.bin" "$(ProjectDir)$(IntermediateOutputPath)LoaderShellCode.o"
 "$(SCE_ORBIS_SDK_DIR)\host_tools\bin\orbis-objcopy.exe" -I binary -O elf64-x86-64 -B i386:x86-64 "ThreadShellCode.bin" "$(ProjectDir)$(IntermediateOutputPath)ThreadShellCode.o"
-"$(SCE_ORBIS_SDK_DIR)\host_tools\bin\orbis-objcopy.exe" -I binary -O elf64-x86-64 -B i386:x86-64 "UnLoaderShellCode.bin" "$(ProjectDir)$(IntermediateOutputPath)UnLoaderShellCode.o"</Command>
+"$(SCE_ORBIS_SDK_DIR)\host_tools\bin\orbis-objcopy.exe" -I binary -O elf64-x86-64 -B i386:x86-64 "FuncCallShellCode.bin" "$(ProjectDir)$(IntermediateOutputPath)FuncCallShellCode.o"</Command>
     </PreBuildEvent>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <Lib>
-      <AdditionalDependencies>$(IntDir)LoaderShellCode.o;$(IntDir)ThreadShellCode.o;$(IntDir)UnLoaderShellCode.o;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(IntDir)ThreadShellCode.o;$(IntDir)FuncCallShellCode.o;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Embed.h" />
     <ClInclude Include="FusionDriver.h" />
     <ClInclude Include="FusionUtils.h" />
-    <ClInclude Include="ShellCode.h" />
+    <ClInclude Include="RemoteCaller.h" />
+    <ClInclude Include="RemoteCallerManager.h" />
+    <ClInclude Include="RemoteSprx.h" />
+    <ClInclude Include="RemoteThread.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FusionDriver.cpp" />
     <ClCompile Include="FusionUtils.cpp" />
-    <ClCompile Include="ShellCode.cpp" />
+    <ClCompile Include="RemoteCaller.cpp" />
+    <ClCompile Include="RemoteCallerManager.cpp" />
+    <ClCompile Include="RemoteSprx.cpp" />
+    <ClCompile Include="RemoteThread.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ORBIS'">Create</PrecompiledHeader>

@@ -26,10 +26,19 @@
     <ClInclude Include="FusionUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShellCode.h">
+    <ClInclude Include="RemoteThread.h">
       <Filter>Header Files\ShellCode</Filter>
     </ClInclude>
     <ClInclude Include="Embed.h">
+      <Filter>Header Files\ShellCode</Filter>
+    </ClInclude>
+    <ClInclude Include="RemoteCaller.h">
+      <Filter>Header Files\ShellCode</Filter>
+    </ClInclude>
+    <ClInclude Include="RemoteSprx.h">
+      <Filter>Header Files\ShellCode</Filter>
+    </ClInclude>
+    <ClInclude Include="RemoteCallerManager.h">
       <Filter>Header Files\ShellCode</Filter>
     </ClInclude>
   </ItemGroup>
@@ -43,7 +52,16 @@
     <ClCompile Include="FusionUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ShellCode.cpp">
+    <ClCompile Include="RemoteThread.cpp">
+      <Filter>Source Files\ShellCode</Filter>
+    </ClCompile>
+    <ClCompile Include="RemoteCaller.cpp">
+      <Filter>Source Files\ShellCode</Filter>
+    </ClCompile>
+    <ClCompile Include="RemoteSprx.cpp">
+      <Filter>Source Files\ShellCode</Filter>
+    </ClCompile>
+    <ClCompile Include="RemoteCallerManager.cpp">
       <Filter>Source Files\ShellCode</Filter>
     </ClCompile>
   </ItemGroup>
