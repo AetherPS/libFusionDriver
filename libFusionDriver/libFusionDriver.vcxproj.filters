@@ -32,6 +32,9 @@
     <ClInclude Include="Embed.h">
       <Filter>Header Files\ShellCode</Filter>
     </ClInclude>
+    <ClInclude Include="RemoteCaller.h">
+      <Filter>Header Files\ShellCode</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -44,6 +47,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ShellCode.cpp">
+      <Filter>Source Files\ShellCode</Filter>
+    </ClCompile>
+    <ClCompile Include="RemoteCaller.cpp">
       <Filter>Source Files\ShellCode</Filter>
     </ClCompile>
   </ItemGroup>

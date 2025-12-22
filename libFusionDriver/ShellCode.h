@@ -12,6 +12,7 @@ namespace Fusion
 		uint64_t thr_initial;
 		uint64_t scePthreadCreate;
 		uint64_t scePthreadJoin;
+		uint64_t scePthreadExit;
 		uint64_t ThreadEntry;
 		uint8_t ShellCodeComplete;
 	}__attribute__((packed));

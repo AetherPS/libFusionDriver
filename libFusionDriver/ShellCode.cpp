@@ -32,6 +32,13 @@ namespace Fusion
 			return -1;
 		}
 
+		res = Resolve(processId, libkernelHandle, "libkernel", "scePthreadExit", 0, &shellCodeHeader->scePthreadExit);
+		if (res != 0)
+		{
+			klog("%s: Failed to resolve scePthreadExit.\n", __FUNCTION__);
+			return -1;
+		}
+
 		// Find the thread initial.
 		shellCodeHeader->thr_initial = GetRemoteAddress(processId, "libkernel.sprx", 0x0008E430);
 		

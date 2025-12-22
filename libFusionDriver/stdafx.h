@@ -7,3 +7,4 @@
 
 #include "DriverDefinitions.h"
 #include "FusionUtils.h"
+#include "Embed.h"

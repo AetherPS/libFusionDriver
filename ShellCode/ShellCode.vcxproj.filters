@@ -20,5 +20,8 @@
     <None Include="UnLoaderShellCode.s">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="FuncCallShellCode.s">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
