@@ -1,13 +1,13 @@
 #pragma once
 #include "FusionDriver.h"
-#include "ShellCode.h"
+#include "RemoteThread.h"
 
-namespace Fusion
-{
 #define FUNC_CALL_MAGIC 0x4C4C4143  // 'CALL' in little endian
 #define FUNC_CALL_MAX_ARGS 16
 #define FUNC_CALL_SCRATCH_SIZE 4096
 
+namespace Fusion
+{
     // Must match the shellcode layout exactly
     struct FuncCallHeader
     {
@@ -29,105 +29,120 @@ namespace Fusion
         uint64_t m_remoteAddress;
         uint64_t m_totalSize;
         bool m_allocated;
+        std::mutex m_mutex;
 
     public:
-        RemoteCaller(int processId)
-            : m_processId(processId)
-            , m_header(nullptr)
-            , m_remoteAddress(0)
-            , m_totalSize(0)
-            , m_allocated(false)
-        {
-            m_totalSize = (uint64_t)&_binary_FuncCallShellCode_bin_end -
-                (uint64_t)&_binary_FuncCallShellCode_bin_start;
-            m_header = reinterpret_cast<FuncCallHeader*>(&_binary_FuncCallShellCode_bin_start);
-            Reset();
-        }
+        explicit RemoteCaller(int processId);
+        ~RemoteCaller();
 
-        ~RemoteCaller()
-        {
-            Cleanup();
-        }
+        // Non-copyable
+        RemoteCaller(const RemoteCaller&) = delete;
+        RemoteCaller& operator=(const RemoteCaller&) = delete;
 
+        // Get process ID
+        int GetProcessId() const;
+
+        // Change target process (will reallocate on next call)
+        void SetProcessId(int processId);
+
+        // Reset state for a new call
         void Reset();
-        void SetFunction(uint64_t funcAddr);
-        bool PushArg(const std::string& str);
-        bool PushArg(const char* str);
-        uint64_t PushData(const void* data, size_t size);
-        uint64_t AllocateScratch(size_t size);
-        bool Allocate();
-        bool ReadScratch(uint64_t remotePtr, void* outData, size_t size);
-        void Cleanup();
 
-        // Push a numeric argument (integers, pointers as uint64_t)
+        // Set the function to call
+        void SetFunction(uint64_t funcAddr);
+
+        // Push an integral argument
         template<typename T>
-        typename std::enable_if<std::is_integral<T>::value || std::is_pointer<T>::value, bool>::type
+        typename std::enable_if<std::is_integral<T>::value, bool>::type
             PushArg(T value)
         {
             if (m_header->argCount >= FUNC_CALL_MAX_ARGS)
                 return false;
 
-            m_header->argBuffer[m_header->argCount++] = static_cast<uint64_t>(
-                reinterpret_cast<uintptr_t>(value)
-                );
+            m_header->argBuffer[m_header->argCount++] = static_cast<uint64_t>(value);
             return true;
         }
 
-        size_t GetScratchRemaining() const
+        // Push a pointer argument
+        template<typename T>
+        typename std::enable_if<std::is_pointer<T>::value, bool>::type
+            PushArg(T value)
         {
-            return FUNC_CALL_SCRATCH_SIZE - m_header->scratchOffset;
+            if (m_header->argCount >= FUNC_CALL_MAX_ARGS)
+                return false;
+
+            m_header->argBuffer[m_header->argCount++] = reinterpret_cast<uint64_t>(value);
+            return true;
         }
 
+        // Push a string argument - copies to scratch memory and pushes pointer
+        bool PushArg(const std::string& str);
+
+        // Push a C-string argument
+        bool PushArg(const char* str);
+
+        // Push raw data to scratch and get back the remote pointer
+        uint64_t PushData(const void* data, size_t size);
+
+        // Allocate space in scratch memory (returns remote pointer, fills with zeros)
+        uint64_t AllocateScratch(size_t size);
+
+        // Get remaining scratch space
+        size_t GetScratchRemaining() const;
+
+        // Execute the function call (thread-safe)
         template<typename TReturn = int64_t>
         TReturn Execute()
         {
-            if (!m_allocated)
-            {
-                if (!Allocate())
-                    return static_cast<TReturn>(-1);
-            }
+            std::lock_guard<std::mutex> lock(m_mutex);
+            return ExecuteInternal<TReturn>();
+        }
 
-            // Write shellcode + header to remote process
-            if (ReadWriteMemory(m_processId, m_remoteAddress, m_header, m_totalSize, true) != 0)
-            {
-                klog("FuncCallInstance: Failed to write shellcode\n");
+        // Execute with inline arguments (variadic template, thread-safe)
+        template<typename TReturn = int64_t, typename... Args>
+        TReturn Call(uint64_t funcAddr, Args&&... args)
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
+            Reset();
+            SetFunction(funcAddr);
+            (PushArg(std::forward<Args>(args)), ...);
+            return ExecuteInternal<TReturn>();
+        }
+
+        // Read data back from scratch memory after execution
+        bool ReadScratch(uint64_t remotePtr, void* outData, size_t size);
+
+        // Cleanup remote memory
+        void Cleanup();
+
+        // Get remote address (useful for debugging)
+        uint64_t GetRemoteAddress() const;
+
+    private:
+        bool EnsureAllocated();
+
+        template<typename TReturn>
+        TReturn ExecuteInternal()
+        {
+            if (!EnsureAllocated())
                 return static_cast<TReturn>(-1);
-            }
 
-            // Execute
-            uint64_t entryPoint = m_remoteAddress + m_header->entry;
-            if (StartPThread(m_processId, entryPoint) != 0)
-            {
-                klog("FuncCallInstance: Thread execution failed\n");
+            if (!WriteShellcode())
                 return static_cast<TReturn>(-1);
-            }
 
-            // Read back return value
+            if (!ExecuteThread())
+                return static_cast<TReturn>(-1);
+
             uint64_t returnValue = 0;
-            if (ReadWriteMemory(m_processId, m_remoteAddress + offsetof(FuncCallHeader, returnValue),
-                &returnValue, sizeof(returnValue), false) != 0)
-            {
-                klog("FuncCallInstance: Failed to read return value\n");
+            if (!ReadReturnValue(&returnValue))
                 return static_cast<TReturn>(-1);
-            }
 
             return static_cast<TReturn>(returnValue);
         }
 
-        // Execute with inline arguments (variadic template)
-        template<typename TReturn = int64_t, typename... Args>
-        TReturn Call(uint64_t funcAddr, Args&&... args)
-        {
-            Reset();
-            SetFunction(funcAddr);
-            (PushArg(std::forward<Args>(args)), ...);
-            return Execute<TReturn>();
-        }
-
-        // Get remote address (useful for debugging)
-        uint64_t GetRemoteAddress() const { return m_remoteAddress; }
-
-    private:
         bool PushString(const char* str, size_t len);
+        bool WriteShellcode();
+        bool ExecuteThread();
+        bool ReadReturnValue(uint64_t* outValue);
     };
 }

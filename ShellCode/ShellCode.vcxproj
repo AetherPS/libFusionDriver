@@ -65,22 +65,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <NMakePreprocessorDefinitions>NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <OutDir>$(SolutionDir)Build\ShellCode</OutDir>
-    <NMakeBuildCommandLine>nasm -f bin -o $(OutDir)\LoaderShellCode.bin LoaderShellCode.s
-nasm -f bin -o $(OutDir)\UnLoaderShellCode.bin UnLoaderShellCode.s
-nasm -f bin -o $(OutDir)\ThreadShellCode.bin ThreadShellCode.s
+    <NMakeBuildCommandLine>nasm -f bin -o $(OutDir)\ThreadShellCode.bin ThreadShellCode.s
 nasm -f bin -o $(OutDir)\FuncCallShellCode.bin FuncCallShellCode.s</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>del $(OutDir)\LoaderShellCode.bin
-del $(OutDir)\UnLoaderShellCode.bin
-del $(OutDir)\ThreadShellCode.bin
+    <NMakeReBuildCommandLine>del $(OutDir)\ThreadShellCode.bin
 del $(OutDir)\FuncCallShellCode.s
 
-nasm -f bin -o $(OutDir)\LoaderShellCode.bin LoaderShellCode.s
-nasm -f bin -o $(OutDir)\UnLoaderShellCode.bin UnLoaderShellCode.s
 nasm -f bin -o $(OutDir)\ThreadShellCode.bin ThreadShellCode.s
 nasm -f bin -o $(OutDir)\FuncCallShellCode.bin FuncCallShellCode.s</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>del $(OutDir)\LoaderShellCode.bin
-del $(OutDir)\UnLoaderShellCode.bin
-del $(OutDir)\ThreadShellCode.bin
+    <NMakeCleanCommandLine>del $(OutDir)\ThreadShellCode.bin
 del $(OutDir)\FuncCallShellCode.s</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -89,22 +81,14 @@ del $(OutDir)\FuncCallShellCode.s</NMakeCleanCommandLine>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <NMakePreprocessorDefinitions>_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <OutDir>$(SolutionDir)Build\ShellCode</OutDir>
-    <NMakeBuildCommandLine>nasm -f bin -o $(OutDir)\LoaderShellCode.bin LoaderShellCode.s
-nasm -f bin -o $(OutDir)\UnLoaderShellCode.bin UnLoaderShellCode.s
-nasm -f bin -o $(OutDir)\ThreadShellCode.bin ThreadShellCode.s
+    <NMakeBuildCommandLine>nasm -f bin -o $(OutDir)\ThreadShellCode.bin ThreadShellCode.s
 nasm -f bin -o $(OutDir)\FuncCallShellCode.bin FuncCallShellCode.s</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>del $(OutDir)\LoaderShellCode.bin
-del $(OutDir)\UnLoaderShellCode.bin
-del $(OutDir)\ThreadShellCode.bin
+    <NMakeReBuildCommandLine>del $(OutDir)\ThreadShellCode.bin
 del $(OutDir)\FuncCallShellCode.s
 
-nasm -f bin -o $(OutDir)\LoaderShellCode.bin LoaderShellCode.s
-nasm -f bin -o $(OutDir)\UnLoaderShellCode.bin UnLoaderShellCode.s
 nasm -f bin -o $(OutDir)\ThreadShellCode.bin ThreadShellCode.s
 nasm -f bin -o $(OutDir)\FuncCallShellCode.bin FuncCallShellCode.s</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>del $(OutDir)\LoaderShellCode.bin
-del $(OutDir)\UnLoaderShellCode.bin
-del $(OutDir)\ThreadShellCode.bin
+    <NMakeCleanCommandLine>del $(OutDir)\ThreadShellCode.bin
 del $(OutDir)\FuncCallShellCode.s</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -114,9 +98,7 @@ del $(OutDir)\FuncCallShellCode.s</NMakeCleanCommandLine>
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="FuncCallShellCode.s" />
-    <None Include="LoaderShellCode.s" />
     <None Include="ThreadShellCode.s" />
-    <None Include="UnLoaderShellCode.s" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -3,7 +3,39 @@
 
 namespace Fusion
 {
-    // Reset state for a new call
+    RemoteCaller::RemoteCaller(int processId)
+        : m_processId(processId)
+        , m_header(nullptr)
+        , m_remoteAddress(0)
+        , m_totalSize(0)
+        , m_allocated(false)
+    {
+        m_totalSize = (uint64_t)&_binary_FuncCallShellCode_bin_end -
+            (uint64_t)&_binary_FuncCallShellCode_bin_start;
+        m_header = reinterpret_cast<FuncCallHeader*>(&_binary_FuncCallShellCode_bin_start);
+        Reset();
+    }
+
+    RemoteCaller::~RemoteCaller()
+    {
+        Cleanup();
+    }
+
+    int RemoteCaller::GetProcessId() const
+    {
+        return m_processId;
+    }
+
+    void RemoteCaller::SetProcessId(int processId)
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        if (m_processId != processId)
+        {
+            Cleanup();
+            m_processId = processId;
+        }
+    }
+
     void RemoteCaller::Reset()
     {
         m_header->funcPtr = 0;
@@ -34,20 +66,19 @@ namespace Fusion
 
     uint64_t RemoteCaller::PushData(const void* data, size_t size)
     {
+        if (!EnsureAllocated())
+            return 0;
+
         if (m_header->scratchOffset + size > FUNC_CALL_SCRATCH_SIZE)
             return 0;
 
-        // Copy data to local scratch
         memcpy(&m_header->scratchMemory[m_header->scratchOffset], data, size);
 
-        // Calculate what the remote address will be
         uint64_t remotePtr = m_remoteAddress +
             offsetof(FuncCallHeader, scratchMemory) +
             m_header->scratchOffset;
 
         m_header->scratchOffset += size;
-
-        // Align to 8 bytes for next allocation
         m_header->scratchOffset = (m_header->scratchOffset + 7) & ~7ULL;
 
         return remotePtr;
@@ -55,13 +86,14 @@ namespace Fusion
 
     uint64_t RemoteCaller::AllocateScratch(size_t size)
     {
+        if (!EnsureAllocated())
+            return 0;
+
         if (m_header->scratchOffset + size > FUNC_CALL_SCRATCH_SIZE)
             return 0;
 
-        // Zero the memory
         memset(&m_header->scratchMemory[m_header->scratchOffset], 0, size);
 
-        // Calculate remote address
         uint64_t remotePtr = m_remoteAddress +
             offsetof(FuncCallHeader, scratchMemory) +
             m_header->scratchOffset;
@@ -72,22 +104,9 @@ namespace Fusion
         return remotePtr;
     }
 
-    bool RemoteCaller::Allocate()
+    size_t RemoteCaller::GetScratchRemaining() const
     {
-        if (m_allocated)
-            return true;
-
-        int res = AllocateMemory(m_processId, &m_remoteAddress, m_totalSize,
-            PROT_READ | PROT_WRITE | PROT_EXEC,
-            MAP_ANON | MAP_PREFAULT_READ);
-        if (res != 0 || m_remoteAddress == 0)
-        {
-            klog("FuncCallInstance: Failed to allocate remote memory\n");
-            return false;
-        }
-
-        m_allocated = true;
-        return true;
+        return FUNC_CALL_SCRATCH_SIZE - m_header->scratchOffset;
     }
 
     bool RemoteCaller::ReadScratch(uint64_t remotePtr, void* outData, size_t size)
@@ -105,6 +124,29 @@ namespace Fusion
         }
     }
 
+    uint64_t RemoteCaller::GetRemoteAddress() const
+    {
+        return m_remoteAddress;
+    }
+
+    bool RemoteCaller::EnsureAllocated()
+    {
+        if (m_allocated)
+            return true;
+
+        int res = AllocateMemory(m_processId, &m_remoteAddress, m_totalSize,
+            PROT_READ | PROT_WRITE | PROT_EXEC,
+            MAP_ANON | MAP_PREFAULT_READ);
+        if (res != 0 || m_remoteAddress == 0)
+        {
+            klog("RemoteCaller: Failed to allocate remote memory\n");
+            return false;
+        }
+
+        m_allocated = true;
+        return true;
+    }
+
     bool RemoteCaller::PushString(const char* str, size_t len)
     {
         if (m_header->argCount >= FUNC_CALL_MAX_ARGS)
@@ -113,21 +155,11 @@ namespace Fusion
         if (m_header->scratchOffset + len > FUNC_CALL_SCRATCH_SIZE)
             return false;
 
-        // Copy string to scratch
+        if (!EnsureAllocated())
+            return false;
+
         memcpy(&m_header->scratchMemory[m_header->scratchOffset], str, len);
 
-        // The actual pointer will be calculated when we know the remote address
-        // For now, store the offset and we'll fix it up before execution
-        // Actually, we need to pre-allocate to know the address...
-
-        // Ensure we have remote memory allocated first
-        if (!m_allocated)
-        {
-            if (!Allocate())
-                return false;
-        }
-
-        // Calculate remote pointer
         uint64_t remotePtr = m_remoteAddress +
             offsetof(FuncCallHeader, scratchMemory) +
             m_header->scratchOffset;
@@ -137,6 +169,38 @@ namespace Fusion
         m_header->scratchOffset += len;
         m_header->scratchOffset = (m_header->scratchOffset + 7) & ~7ULL;
 
+        return true;
+    }
+
+    bool RemoteCaller::WriteShellcode()
+    {
+        if (ReadWriteMemory(m_processId, m_remoteAddress, m_header, m_totalSize, true) != 0)
+        {
+            klog("RemoteCaller: Failed to write shellcode\n");
+            return false;
+        }
+        return true;
+    }
+
+    bool RemoteCaller::ExecuteThread()
+    {
+        uint64_t entryPoint = m_remoteAddress + m_header->entry;
+        if (StartPThread(m_processId, entryPoint) != 0)
+        {
+            klog("RemoteCaller: Thread execution failed\n");
+            return false;
+        }
+        return true;
+    }
+
+    bool RemoteCaller::ReadReturnValue(uint64_t* outValue)
+    {
+        if (ReadWriteMemory(m_processId, m_remoteAddress + offsetof(FuncCallHeader, returnValue),
+            outValue, sizeof(uint64_t), false) != 0)
+        {
+            klog("RemoteCaller: Failed to read return value\n");
+            return false;
+        }
         return true;
     }
 }
