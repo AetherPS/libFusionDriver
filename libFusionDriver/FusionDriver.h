@@ -21,6 +21,10 @@ namespace Fusion
 	int GetAuthId(int processId, uint64_t* authId);
 	int SetAuthId(int processId, uint64_t authId);
 
+	int GetKernelBase(uint64_t* kernelBase);
+	int KernelReadWriteMemory(uint64_t addr, void* data, size_t len, bool write);
+	int KernelReadWriteIccNvs(uint32_t block, uint32_t offset, uint32_t size, uint8_t* value, bool isWrite);
+
 	// Helpful wrappers.
 	uint64_t GetRemoteAddress(int processId, const char* library, uint64_t offset);
 	uint64_t GetRemoteAddress(int processId, int handle, uint64_t offset);
