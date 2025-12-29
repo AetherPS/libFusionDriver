@@ -156,6 +156,47 @@ namespace Fusion
 		return MakeDriverRequest(PROC_GET_AUTHID, &input);
 	}
 
+	int GetKernelBase(uint64_t* kernelBase)
+	{
+		Input_KernelBase input;
+		input.KernelBase = 0;
+
+		int res = MakeDriverRequest(KERN_GET_BASE, &input);
+		if (res != 0)
+			return res;
+
+		if (kernelBase)
+		{
+			*kernelBase = input.KernelBase;
+		}
+
+		return 0;
+	}
+
+	int KernelReadWriteMemory(uint64_t addr, void* data, size_t len, bool write)
+	{
+		Input_ReadWriteMemory input;
+		input.ProcessId = 0;
+		input.ProcessAddress = addr;
+		input.DataAddress = data;
+		input.Length = len;
+		input.IsWrite = write;
+
+		return MakeDriverRequest(KERN_READ_WRITE_MEMORY, &input);
+	}
+
+	int KernelReadWriteIccNvs(uint32_t block, uint32_t offset, uint32_t size, uint8_t* value, bool isWrite)
+	{
+		Input_IccNvsReadWrite input;
+		input.Block = block;
+		input.Offset = offset;
+		input.Size = size;
+		input.Value = value;
+		input.IsWrite = isWrite;
+
+		return MakeDriverRequest(KERN_ICC_NVS_READ_WRITE, &input);
+	}
+
 	uint64_t GetRemoteAddress(int processId, const char* library, uint64_t offset)
 	{
 		OrbisLibraryInfo libraries[255];
