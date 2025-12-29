@@ -23,6 +23,13 @@ namespace Fusion
 
 	int GetKernelBase(uint64_t* kernelBase);
 	int KernelReadWriteMemory(uint64_t addr, void* data, size_t len, bool write);
+
+	// Block offset in sFlash0:
+	// 0: 0x1C4000
+	// 1: 0x1C7000
+	// 2: 0x1C8000
+	// 3: Unk - Always all FFs.
+	// 4: 0x1CC000
 	int KernelReadWriteIccNvs(uint32_t block, uint32_t offset, uint32_t size, uint8_t* value, bool isWrite);
 
 	// Helpful wrappers.
