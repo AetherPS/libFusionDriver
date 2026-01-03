@@ -20,25 +20,25 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FusionDriver.h">
+    <ClInclude Include="..\Include\RemoteCaller.h">
+      <Filter>Header Files\ShellCode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\RemoteCallerManager.h">
+      <Filter>Header Files\ShellCode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\RemoteSprx.h">
+      <Filter>Header Files\ShellCode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\RemoteThread.h">
+      <Filter>Header Files\ShellCode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\FusionDriver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FusionUtils.h">
+    <ClInclude Include="..\Include\FusionUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RemoteThread.h">
-      <Filter>Header Files\ShellCode</Filter>
-    </ClInclude>
-    <ClInclude Include="Embed.h">
-      <Filter>Header Files\ShellCode</Filter>
-    </ClInclude>
-    <ClInclude Include="RemoteCaller.h">
-      <Filter>Header Files\ShellCode</Filter>
-    </ClInclude>
-    <ClInclude Include="RemoteSprx.h">
-      <Filter>Header Files\ShellCode</Filter>
-    </ClInclude>
-    <ClInclude Include="RemoteCallerManager.h">
+    <ClInclude Include="..\Include\Embed.h">
       <Filter>Header Files\ShellCode</Filter>
     </ClInclude>
   </ItemGroup>
@@ -46,23 +46,23 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FusionDriver.cpp">
+    <ClCompile Include="..\Source\RemoteCaller.cpp">
+      <Filter>Source Files\ShellCode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\RemoteCallerManager.cpp">
+      <Filter>Source Files\ShellCode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\RemoteSprx.cpp">
+      <Filter>Source Files\ShellCode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\RemoteThread.cpp">
+      <Filter>Source Files\ShellCode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FusionDriver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FusionUtils.cpp">
+    <ClCompile Include="..\Source\FusionUtils.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RemoteThread.cpp">
-      <Filter>Source Files\ShellCode</Filter>
-    </ClCompile>
-    <ClCompile Include="RemoteCaller.cpp">
-      <Filter>Source Files\ShellCode</Filter>
-    </ClCompile>
-    <ClCompile Include="RemoteSprx.cpp">
-      <Filter>Source Files\ShellCode</Filter>
-    </ClCompile>
-    <ClCompile Include="RemoteCallerManager.cpp">
-      <Filter>Source Files\ShellCode</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
