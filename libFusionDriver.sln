@@ -1,14 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.12.35506.116
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11312.151 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libFusionDriver", "libFusionDriver\libFusionDriver.vcxproj", "{EED0F997-7497-497A-A1FE-63CCB5E1FE4D}"
-	ProjectSection(ProjectDependencies) = postProject
-		{EB0A8648-08BB-51DC-A6FD-8F70A3394B84} = {EB0A8648-08BB-51DC-A6FD-8F70A3394B84}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ShellCode", "ShellCode\ShellCode.vcxproj", "{EB0A8648-08BB-51DC-A6FD-8F70A3394B84}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libFusionDriver", "Official SDK\libFusionDriver.vcxproj", "{EED0F997-7497-497A-A1FE-63CCB5E1FE4D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libFusionDriverOOSDK", "Open Orbis SDK\libFusionDriverOOSDK.vcxproj", "{4EE22ABE-9072-FC8D-AAF2-2868CFDBCF13}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,14 +15,18 @@ Global
 		Release|ORBIS = Release|ORBIS
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{EED0F997-7497-497A-A1FE-63CCB5E1FE4D}.Debug|ORBIS.ActiveCfg = Debug|ORBIS
-		{EED0F997-7497-497A-A1FE-63CCB5E1FE4D}.Debug|ORBIS.Build.0 = Debug|ORBIS
-		{EED0F997-7497-497A-A1FE-63CCB5E1FE4D}.Release|ORBIS.ActiveCfg = Release|ORBIS
-		{EED0F997-7497-497A-A1FE-63CCB5E1FE4D}.Release|ORBIS.Build.0 = Release|ORBIS
 		{EB0A8648-08BB-51DC-A6FD-8F70A3394B84}.Debug|ORBIS.ActiveCfg = Debug|x64
 		{EB0A8648-08BB-51DC-A6FD-8F70A3394B84}.Debug|ORBIS.Build.0 = Debug|x64
 		{EB0A8648-08BB-51DC-A6FD-8F70A3394B84}.Release|ORBIS.ActiveCfg = Release|x64
 		{EB0A8648-08BB-51DC-A6FD-8F70A3394B84}.Release|ORBIS.Build.0 = Release|x64
+		{EED0F997-7497-497A-A1FE-63CCB5E1FE4D}.Debug|ORBIS.ActiveCfg = Debug|ORBIS
+		{EED0F997-7497-497A-A1FE-63CCB5E1FE4D}.Debug|ORBIS.Build.0 = Debug|ORBIS
+		{EED0F997-7497-497A-A1FE-63CCB5E1FE4D}.Release|ORBIS.ActiveCfg = Release|ORBIS
+		{EED0F997-7497-497A-A1FE-63CCB5E1FE4D}.Release|ORBIS.Build.0 = Release|ORBIS
+		{4EE22ABE-9072-FC8D-AAF2-2868CFDBCF13}.Debug|ORBIS.ActiveCfg = Debug|x64
+		{4EE22ABE-9072-FC8D-AAF2-2868CFDBCF13}.Debug|ORBIS.Build.0 = Debug|x64
+		{4EE22ABE-9072-FC8D-AAF2-2868CFDBCF13}.Release|ORBIS.ActiveCfg = Release|x64
+		{4EE22ABE-9072-FC8D-AAF2-2868CFDBCF13}.Release|ORBIS.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -58,7 +58,14 @@ namespace Fusion
 		auto shellcodeSize = (uint64_t)&_binary_ThreadShellCode_bin_end - (uint64_t)&_binary_ThreadShellCode_bin_start;
 		auto totalAllocatedSize = shellcodeSize + STACK_SIZE;
 		uint64_t shellCodeMemory;
-		if (AllocateMemory(processId, &shellCodeMemory, totalAllocatedSize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PREFAULT_READ) != 0 || (void*)shellCodeMemory == nullptr || (void*)shellCodeMemory == MAP_FAILED || shellCodeMemory < 0)
+
+#ifdef __ORBIS__
+		int result = AllocateMemory(processId, &shellCodeMemory, totalAllocatedSize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PREFAULT_READ);
+#else
+		int result = AllocateMemory(processId, &shellCodeMemory, totalAllocatedSize, VM_PROT_ALL, MAP_ANON | MAP_PREFAULT_READ);
+#endif
+
+		if (result != 0 || (void*)shellCodeMemory == nullptr || (void*)shellCodeMemory == MAP_FAILED || shellCodeMemory < 0)
 		{
 			klog("%s: Failed to allocate memory on the process. %llX\n", __FUNCTION__, shellCodeMemory);
 			return -1;

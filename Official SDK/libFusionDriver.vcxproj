@@ -49,10 +49,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ORBIS'">
     <OutDir>$(SolutionDir)Build\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
+    <SourcePath>$(SolutionDir)Source;$(ProjectDir)</SourcePath>
+    <IncludePath>$(SolutionDir)Include;$(ProjectDir)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">
     <IntDir>$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)Build\</OutDir>
+    <IncludePath>$(SolutionDir)Include;$(ProjectDir)</IncludePath>
+    <SourcePath>$(SolutionDir)Source;$(ProjectDir)</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">
     <ClCompile>
@@ -102,26 +106,31 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Embed.h" />
-    <ClInclude Include="FusionDriver.h" />
-    <ClInclude Include="FusionUtils.h" />
-    <ClInclude Include="RemoteCaller.h" />
-    <ClInclude Include="RemoteCallerManager.h" />
-    <ClInclude Include="RemoteSprx.h" />
-    <ClInclude Include="RemoteThread.h" />
+    <ClInclude Include="..\Include\Embed.h" />
+    <ClInclude Include="..\Include\FusionDriver.h" />
+    <ClInclude Include="..\Include\FusionUtils.h" />
+    <ClInclude Include="..\Include\RemoteCaller.h" />
+    <ClInclude Include="..\Include\RemoteCallerManager.h" />
+    <ClInclude Include="..\Include\RemoteSprx.h" />
+    <ClInclude Include="..\Include\RemoteThread.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FusionDriver.cpp" />
-    <ClCompile Include="FusionUtils.cpp" />
-    <ClCompile Include="RemoteCaller.cpp" />
-    <ClCompile Include="RemoteCallerManager.cpp" />
-    <ClCompile Include="RemoteSprx.cpp" />
-    <ClCompile Include="RemoteThread.cpp" />
+    <ClCompile Include="..\Source\FusionDriver.cpp" />
+    <ClCompile Include="..\Source\FusionUtils.cpp" />
+    <ClCompile Include="..\Source\RemoteCaller.cpp" />
+    <ClCompile Include="..\Source\RemoteCallerManager.cpp" />
+    <ClCompile Include="..\Source\RemoteSprx.cpp" />
+    <ClCompile Include="..\Source\RemoteThread.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ORBIS'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ORBIS'">Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ShellCode\ShellCode.vcxproj">
+      <Project>{eb0a8648-08bb-51dc-a6fd-8f70a3394b84}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Condition="'$(ConfigurationType)' == 'Makefile' and Exists('$(VCTargetsPath)\Platforms\$(Platform)\SCE.Makefile.$(Platform).targets')" Project="$(VCTargetsPath)\Platforms\$(Platform)\SCE.Makefile.$(Platform).targets" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
