@@ -9,24 +9,36 @@ libFusionDriver is the userland component designed to interface with the Fusion 
 * Provides functionality to **start and stop SPRX modules** within any process.
 
 ## 🏗️ Build Requirements
+
+### For Official SDK Build
 - PS4 Official SDK
+- [NASM](https://www.nasm.us/)
+- Visual Studio
+
+### For Open Orbis SDK Build
+- [Open Orbis SDK](https://github.com/OpenOrbis/OpenOrbis-PS4-Toolchain)
 - [NASM](https://www.nasm.us/)
 
 ## 🛠️ Build Steps
 
 1.  Ensure that **NASM** is included in your system's `PATH` environment variable.
-2.  Ensure that the **PS4 Official SDK** is fully installed, including the Visual Studio integration components.
-3.  **Clone the Repository** and its submodules:
+2.  **Clone the Repository** and its submodules:
     ```bash
     git clone --recurse-submodules https://github.com/AetherPS/libFusionDriver
     ```
-4.  Build the project `libFusionDriver` using **Visual Studio**.
+3.  Choose your SDK and build:
+    - **Official SDK**: Ensure the PS4 Official SDK is fully installed, including Visual Studio integration. Build the `libFusionDriver` project using **Visual Studio**.
+    - **Open Orbis SDK**: Ensure the Open Orbis SDK is properly installed. Build the `libFusionDriverOOSDK` project using **Visual Studio** or your preferred build system.
 
-# 📚 Consumtion Instructions
+# 📚 Consumption Instructions
 To consume the **libFusionDriver statically linked library**, you will need to add the following **paths** to your project's **Additional Include Directories**:
 
-* `libFusionDriver\libFusionDriver`
+* `libFusionDriver\Include`
 * `libFusionDriver\External\FusionShared`
+
+Link against the appropriate build output based on your SDK:
+* **Official SDK**: Link against the library`libFusionDriver.a`
+* **Open Orbis SDK**: Link against the library `libFusionDriverOOSDK.a`
 
 # 📘 API Reference
 
