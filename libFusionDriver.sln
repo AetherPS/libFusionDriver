@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ShellCode", "ShellCode\Shel
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libFusionDriver", "Official SDK\libFusionDriver.vcxproj", "{EED0F997-7497-497A-A1FE-63CCB5E1FE4D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libFusionDriverOOSDK", "Open Orbis SDK\libFusionDriverOOSDK.vcxproj", "{4EE22ABE-9072-FC8D-AAF2-2868CFDBCF13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ORBIS = Debug|ORBIS
@@ -21,6 +23,10 @@ Global
 		{EED0F997-7497-497A-A1FE-63CCB5E1FE4D}.Debug|ORBIS.Build.0 = Debug|ORBIS
 		{EED0F997-7497-497A-A1FE-63CCB5E1FE4D}.Release|ORBIS.ActiveCfg = Release|ORBIS
 		{EED0F997-7497-497A-A1FE-63CCB5E1FE4D}.Release|ORBIS.Build.0 = Release|ORBIS
+		{4EE22ABE-9072-FC8D-AAF2-2868CFDBCF13}.Debug|ORBIS.ActiveCfg = Debug|x64
+		{4EE22ABE-9072-FC8D-AAF2-2868CFDBCF13}.Debug|ORBIS.Build.0 = Debug|x64
+		{4EE22ABE-9072-FC8D-AAF2-2868CFDBCF13}.Release|ORBIS.ActiveCfg = Release|x64
+		{4EE22ABE-9072-FC8D-AAF2-2868CFDBCF13}.Release|ORBIS.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

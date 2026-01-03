@@ -4,6 +4,12 @@
 
 #define DRIVER_PATH "/dev/Fusion"
 
+#ifndef __ORBIS__
+#define MAP_FAILED	((void *)-1)
+#define	MAP_ANON	 0x1000
+#define	MAP_PREFAULT_READ 0x00040000
+#endif
+
 namespace Fusion
 {
 	bool IsDriverLoaded();

@@ -1,12 +1,15 @@
 #include "stdafx.h"
 #include "FusionDriver.h"
-#include <KernelExt.h>
 
 namespace Fusion
 {
 	bool IsDriverLoaded()
 	{
+#ifdef __ORBIS__
 		SceKernelStat stat;
+#else
+		OrbisKernelStat stat;
+#endif
 		return sceKernelStat(DRIVER_PATH, &stat) == 0;
 	}
 
