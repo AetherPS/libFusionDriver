@@ -66,10 +66,16 @@ $(BUILDDIR)/$(TARGET): $(OBJS) $(SHELLCODE_OBJS)
 
 # Embed shellcode binaries as object files
 $(INTDIR)/ThreadShellCode.o: $(SHELLCODEDIR)/ThreadShellCode.bin
-	$(OBJCOPY) -I binary -O elf64-x86-64 -B i386:x86-64 $< $@
+	$(OBJCOPY) -I binary -O elf64-x86-64 -B i386:x86-64 $< $@ \
+		--redefine-sym _binary____Build_ShellCode_ThreadShellCode_bin_start=_binary_ThreadShellCode_bin_start \
+		--redefine-sym _binary____Build_ShellCode_ThreadShellCode_bin_end=_binary_ThreadShellCode_bin_end \
+		--redefine-sym _binary____Build_ShellCode_ThreadShellCode_bin_size=_binary_ThreadShellCode_bin_size
 
 $(INTDIR)/FuncCallShellCode.o: $(SHELLCODEDIR)/FuncCallShellCode.bin
-	$(OBJCOPY) -I binary -O elf64-x86-64 -B i386:x86-64 $< $@
+	$(OBJCOPY) -I binary -O elf64-x86-64 -B i386:x86-64 $< $@ \
+		--redefine-sym _binary____Build_ShellCode_FuncCallShellCode_bin_start=_binary_FuncCallShellCode_bin_start \
+		--redefine-sym _binary____Build_ShellCode_FuncCallShellCode_bin_end=_binary_FuncCallShellCode_bin_end \
+		--redefine-sym _binary____Build_ShellCode_FuncCallShellCode_bin_size=_binary_FuncCallShellCode_bin_size
 
 # Compile source files from Source directory
 $(INTDIR)/%.o: $(SOURCEDIR)/%.cpp
