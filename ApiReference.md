@@ -89,7 +89,7 @@ Sets the authentication Id for a process.
 ### Memory Operations
 
 ```cpp
-int ReadWriteMemory(int processId, uint64_t addr, voId* data, size_t len, bool write);
+int ReadWriteMemory(int processId, uint64_t addr, void* data, size_t len, bool write);
 ```
 Reads from or writes to a process's memory.
 
@@ -97,7 +97,7 @@ Reads from or writes to a process's memory.
 |-----------|------|-------------|
 | `processId` | `int` | Target process Id |
 | `addr` | `uint64_t` | Remote memory address |
-| `data` | `voId*` | Local buffer for read/write data |
+| `data` | `void*` | Local buffer for read/write data |
 | `len` | `size_t` | Number of bytes to transfer |
 | `write` | `bool` | `true` to write, `false` to read |
 
@@ -156,7 +156,7 @@ Retrieves a list of loaded libraries/modules in the target process.
 ---
 
 ```cpp
-int Resolve(int processId, int libHandle, const char* library, const char* symbol, uint64_t* addr);
+int Resolve(int processId, int libHandle, const char* library, const char* symbol, unsigned int flags, uint64_t* addr);
 ```
 Resolves a symbol address within a loaded library.
 
@@ -166,6 +166,7 @@ Resolves a symbol address within a loaded library.
 | `libHandle` | `int` | Library handle (or `0` to search by name) |
 | `library` | `const char*` | Library name (used if `libHandle` is `0`) |
 | `symbol` | `const char*` | Symbol name to resolve |
+| `flags` | `unsigned int` | Resolution flags |
 | `addr` | `uint64_t*` | Output pointer to receive symbol address |
 
 **Returns:** `0` on success, error code on failure.
@@ -190,17 +191,67 @@ Starts a new thread in the target process at a specified entry point.
 
 ---
 
+### Kernel Operations
+
+```cpp
+int GetKernelBase(uint64_t* kernelBase);
+```
+Retrieves the base address of the kernel.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `kernelBase` | `uint64_t*` | Output pointer to receive kernel base address |
+
+**Returns:** `0` on success, error code on failure.
+
+---
+
+```cpp
+int KernelReadWriteMemory(uint64_t addr, void* data, size_t len, bool write);
+```
+Reads from or writes to kernel memory.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `addr` | `uint64_t` | Kernel memory address |
+| `data` | `void*` | Local buffer for read/write data |
+| `len` | `size_t` | Number of bytes to transfer |
+| `write` | `bool` | `true` to write, `false` to read |
+
+**Returns:** `0` on success, error code on failure.
+
+---
+
+```cpp
+int KernelReadWriteIccNvs(uint32_t block, uint32_t offset, uint32_t size, uint8_t* value, bool isWrite);
+```
+Reads from or writes to the ICC NVS (non-volatile storage) in sFlash0.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `block` | `uint32_t` | Block index (0: 0x1C4000, 1: 0x1C7000, 2: 0x1C8000, 4: 0x1CC000) |
+| `offset` | `uint32_t` | Offset within the block |
+| `size` | `uint32_t` | Number of bytes to transfer |
+| `value` | `uint8_t*` | Buffer for read/write data |
+| `isWrite` | `bool` | `true` to write, `false` to read |
+
+**Returns:** `0` on success, error code on failure.
+
+---
+
 ### Helper Functions
 
 ```cpp
 uint64_t GetRemoteAddress(int processId, const char* library, uint64_t offset);
+uint64_t GetRemoteAddress(int processId, int handle, uint64_t offset);
 ```
 Calculates an absolute address from a library base plus offset.
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `processId` | `int` | Target process Id |
-| `library` | `const char*` | Library name |
+| `library` | `const char*` | Library name (first overload) |
+| `handle` | `int` | Library handle (second overload) |
 | `offset` | `uint64_t` | Offset from library base |
 
 **Returns:** Absolute remote address, or `0` on failure.
@@ -300,7 +351,7 @@ Returns the current target process Id.
 ---
 
 ```cpp
-voId SetProcessId(int processId);
+void SetProcessId(int processId);
 ```
 Changes the target process. Memory will be reallocated on the next call.
 
@@ -309,14 +360,14 @@ Changes the target process. Memory will be reallocated on the next call.
 #### Call Setup
 
 ```cpp
-voId Reset();
+void Reset();
 ```
 Resets the internal state for a new function call.
 
 ---
 
 ```cpp
-voId SetFunction(uint64_t funcAddr);
+void SetFunction(uint64_t funcAddr);
 ```
 Sets the remote function address to call.
 
@@ -347,7 +398,7 @@ Pushes a string argument. The string is copied to scratch memory and a remote po
 #### Scratch Memory
 
 ```cpp
-uint64_t PushData(const voId* data, size_t size);
+uint64_t PushData(const void* data, size_t size);
 ```
 Copies raw data to scratch memory.
 
@@ -372,7 +423,7 @@ Returns the remaining bytes available in scratch memory.
 ---
 
 ```cpp
-bool ReadScratch(uint64_t remotePtr, voId* outData, size_t size);
+bool ReadScratch(uint64_t remotePtr, void* outData, size_t size);
 ```
 Reads data back from scratch memory after execution.
 
@@ -430,7 +481,7 @@ int result = call->Execute<int>();
 #### Cleanup
 
 ```cpp
-voId Cleanup();
+void Cleanup();
 ```
 Frees all remote memory allocations.
 
@@ -468,7 +519,7 @@ Gets the existing global instance without creating one.
 ---
 
 ```cpp
-static voId Destroy();
+static void Destroy();
 ```
 Destroys the global instance and frees all associated resources.
 
