@@ -108,6 +108,7 @@
   <ItemGroup>
     <ClInclude Include="..\Include\Embed.h" />
     <ClInclude Include="..\Include\FusionDriver.h" />
+    <ClInclude Include="..\Include\FusionShellCode.h" />
     <ClInclude Include="..\Include\FusionUtils.h" />
     <ClInclude Include="..\Include\RemoteCaller.h" />
     <ClInclude Include="..\Include\RemoteCallerManager.h" />
@@ -117,6 +118,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\FusionDriver.cpp" />
+    <ClCompile Include="..\Source\FusionShellCode.cpp" />
     <ClCompile Include="..\Source\FusionUtils.cpp" />
     <ClCompile Include="..\Source\RemoteCaller.cpp" />
     <ClCompile Include="..\Source\RemoteCallerManager.cpp" />

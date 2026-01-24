@@ -13,6 +13,7 @@
 namespace Fusion
 {
 	bool IsDriverLoaded();
+	int MakeDriverRequest(unsigned long request, void* input);
 
 	int GetDriverInfo(FusionDriverInfo* info);
 
