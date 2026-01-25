@@ -7,53 +7,41 @@ namespace Fusion
 {
 	int StartPThread(int processId, uint64_t entryPoint)
 	{
-		int libkernelHandle = GetLibraryHandle(processId, "libkernel");
-		if (libkernelHandle < 0)
-		{
-			klog("%s: Failed to get libkernel handle.\n", __FUNCTION__);
-			return -1;
-		}
-
 		auto shellCodeHeader = (ThreadShellCodeHeader*)&_binary_ThreadShellCode_bin_start;
 		shellCodeHeader->ShellCodeComplete = 0;
 		shellCodeHeader->ThreadEntry = entryPoint; // Set the thread entry point.
 
-		int res = Resolve(processId, libkernelHandle, "libkernel", "scePthreadCreate", 0, &shellCodeHeader->scePthreadCreate);
+		int res = Resolve(processId, 8193, "libkernel", "scePthreadCreate", 0, &shellCodeHeader->scePthreadCreate);
 		if (res != 0)
 		{
 			klog("%s: Failed to resolve scePthreadCreate.\n", __FUNCTION__);
 			return -1;
 		}
 
-		res = Resolve(processId, libkernelHandle, "libkernel", "scePthreadJoin", 0, &shellCodeHeader->scePthreadJoin);
+		res = Resolve(processId, 8193, "libkernel", "scePthreadJoin", 0, &shellCodeHeader->scePthreadJoin);
 		if (res != 0)
 		{
 			klog("%s: Failed to resolve scePthreadJoin.\n", __FUNCTION__);
 			return -1;
 		}
 
-		res = Resolve(processId, libkernelHandle, "libkernel", "scePthreadExit", 0, &shellCodeHeader->scePthreadExit);
+		res = Resolve(processId, 8193, "libkernel", "scePthreadExit", 0, &shellCodeHeader->scePthreadExit);
 		if (res != 0)
 		{
 			klog("%s: Failed to resolve scePthreadExit.\n", __FUNCTION__);
 			return -1;
 		}
 
-		// Find the thread initial.
-		shellCodeHeader->thr_initial = GetRemoteAddress(processId, "libkernel.sprx", 0x0008E430);
-		
-		if (shellCodeHeader->thr_initial == 0)
-			shellCodeHeader->thr_initial = GetRemoteAddress(processId, "libkernel_sys.sprx", 0x0008E830);
-		
-		if (shellCodeHeader->thr_initial == 0)
-			shellCodeHeader->thr_initial = GetRemoteAddress(processId, "libkernel_web.sprx", 0x0008E430);
-
-		// Make sure that we actually found thr_initial.
-		if (shellCodeHeader->thr_initial <= 0)
+		uint64_t environ = 0;
+		res = Resolve(processId, 8193, 0, "environ", 0, &environ);
+		if (res != 0)
 		{
-			klog("%s: Failed to resolve thr_initial.\n", __FUNCTION__);
+			klog("%s: Failed to resolve 'environ'... [%llX] Can not continue.\n", __FUNCTION__, res);
 			return -1;
 		}
+
+		// thr_initial is always +0x10 from the environ symbol.
+		shellCodeHeader->thr_initial = environ + 0x10;
 
 		auto shellcodeSize = (uint64_t)&_binary_ThreadShellCode_bin_end - (uint64_t)&_binary_ThreadShellCode_bin_start;
 		auto totalAllocatedSize = shellcodeSize + STACK_SIZE;
@@ -65,7 +53,7 @@ namespace Fusion
 		int result = AllocateMemory(processId, &shellCodeMemory, totalAllocatedSize, VM_PROT_ALL);
 #endif
 
-		if (result != 0 || (void*)shellCodeMemory == nullptr || (void*)shellCodeMemory == MAP_FAILED || shellCodeMemory < 0)
+		if (result != 0 || shellCodeMemory <= 0)
 		{
 			klog("%s: Failed to allocate memory on the process. %llX\n", __FUNCTION__, shellCodeMemory);
 			return -1;
@@ -82,8 +70,9 @@ namespace Fusion
 		StartThread(processId, shellCodeMemory + shellCodeHeader->entry, shellCodeMemory + shellcodeSize, STACK_SIZE);
 
 		// Wait for the shellcode to complete by reading the byte that will be set to 1 on completion.
-		bool shellCodeComplete = false;
-		while (!shellCodeComplete)
+		bool shellCodeComplete = 0;
+		int timeout = 20; // 2 seconds
+		while (!shellCodeComplete && timeout > 0)
 		{
 			sceKernelUsleep(1000 * 500);
 
@@ -93,6 +82,17 @@ namespace Fusion
 				FreeMemory(processId, shellCodeMemory, totalAllocatedSize);
 				return -1;
 			}
+
+			timeout--;
+		}
+
+		if (timeout == 0)
+		{
+			klog("%s: Timeout waiting for shellcode completion\n", __FUNCTION__);
+		}
+		else
+		{
+			sceKernelUsleep(1000 * 200);
 		}
 
 		FreeMemory(processId, shellCodeMemory, totalAllocatedSize);

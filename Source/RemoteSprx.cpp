@@ -9,13 +9,8 @@ namespace Fusion
         if (!caller)
             return -1;
 
-        int libkernelHandle = Fusion::GetLibraryHandle(processId, "libkernel");
-        if (libkernelHandle < 0)
-            return -1;
-
         uint64_t sceKernelLoadStartModule = 0;
-        if (Fusion::Resolve(processId, libkernelHandle, "libkernel",
-            "sceKernelLoadStartModule", 0, &sceKernelLoadStartModule) != 0)
+        if (Fusion::Resolve(processId, 8193, nullptr, "sceKernelLoadStartModule", 0, &sceKernelLoadStartModule) != 0)
             return -1;
 
         // Allocate scratch for output result
@@ -47,13 +42,8 @@ namespace Fusion
         if (!caller)
             return -1;
 
-        int libkernelHandle = Fusion::GetLibraryHandle(processId, "libkernel");
-        if (libkernelHandle < 0)
-            return -1;
-
         uint64_t sceKernelStopUnloadModule = 0;
-        if (Fusion::Resolve(processId, libkernelHandle, "libkernel",
-            "sceKernelStopUnloadModule", 0, &sceKernelStopUnloadModule) != 0)
+        if (Fusion::Resolve(processId, 8193, nullptr, "sceKernelStopUnloadModule", 0, &sceKernelStopUnloadModule) != 0)
             return -1;
 
         // Allocate scratch for output result
