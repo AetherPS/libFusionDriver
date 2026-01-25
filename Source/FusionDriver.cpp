@@ -34,11 +34,6 @@ namespace Fusion
 		return 0;
 	}
 
-	int GetDriverInfo(FusionDriverInfo* info)
-	{
-		return MakeDriverRequest(FUSION_DRIVERINFO, info);
-	}
-
 	int Jailbreak(int processId, JailBackup* backup, uint64_t authId, bool nullSandboxPath)
 	{
 		Input_Jailbreak input;
@@ -82,14 +77,13 @@ namespace Fusion
 		return MakeDriverRequest(PROC_READ_WRITE_MEMORY, &input);
 	}
 
-	int AllocateMemory(int processId, uint64_t* outAddress, size_t length, int protection, int flags)
+	int AllocateMemory(int processId, uint64_t* outAddress, size_t length, int protection)
 	{
 		Input_AllocMemory input;
 		input.ProcessId = processId;
 		input.OutAddress = outAddress;
 		input.Length = length;
 		input.Protection = protection;
-		input.Flags = flags;
 
 		return MakeDriverRequest(PROC_ALLOCATE_MEMORY, &input);
 	}

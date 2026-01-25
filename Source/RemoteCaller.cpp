@@ -135,9 +135,9 @@ namespace Fusion
             return true;
 
 #ifdef __ORBIS__
-        int res = AllocateMemory(m_processId, &m_remoteAddress, m_totalSize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PREFAULT_READ);
+        int res = AllocateMemory(m_processId, &m_remoteAddress, m_totalSize, PROT_READ | PROT_WRITE | PROT_EXEC);
 #else
-        int res = AllocateMemory(m_processId, &m_remoteAddress, m_totalSize, VM_PROT_ALL, MAP_ANON | MAP_PREFAULT_READ);
+        int res = AllocateMemory(m_processId, &m_remoteAddress, m_totalSize, VM_PROT_ALL);
 #endif
         if (res != 0 || m_remoteAddress == 0)
         {

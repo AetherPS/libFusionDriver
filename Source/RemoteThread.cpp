@@ -60,9 +60,9 @@ namespace Fusion
 		uint64_t shellCodeMemory;
 
 #ifdef __ORBIS__
-		int result = AllocateMemory(processId, &shellCodeMemory, totalAllocatedSize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PREFAULT_READ);
+		int result = AllocateMemory(processId, &shellCodeMemory, totalAllocatedSize, PROT_READ | PROT_WRITE | PROT_EXEC);
 #else
-		int result = AllocateMemory(processId, &shellCodeMemory, totalAllocatedSize, VM_PROT_ALL, MAP_ANON | MAP_PREFAULT_READ);
+		int result = AllocateMemory(processId, &shellCodeMemory, totalAllocatedSize, VM_PROT_ALL);
 #endif
 
 		if (result != 0 || (void*)shellCodeMemory == nullptr || (void*)shellCodeMemory == MAP_FAILED || shellCodeMemory < 0)
